@@ -1,0 +1,171 @@
+﻿@model IEnumerable<RestoranOtomasyonu.Models.Table>
+
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="text-center mb-5 hero-section">
+    <div class="hero-content">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-fire-alt text-danger me-2"></i>
+            STEAK HOUSE
+        </h1>
+        <p class="lead text-light mb-4">Modern Lezzet Deneyimi</p>
+        <div class="hero-badges mb-4">
+            <span class="badge bg-danger me-2"><i class="fas fa-star me-1"></i>Premium Et</span>
+            <span class="badge bg-danger me-2"><i class="fas fa-award me-1"></i>Özel Menü</span>
+            <span class="badge bg-danger"><i class="fas fa-clock me-1"></i>Hızlı Servis</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="section-title text-center mb-5">
+        <h2 class="text-light"><i class="fas fa-chair me-2"></i>MASALAR</h2>
+        <div class="neon-line"></div>
+        <p class="text-muted">Masa durumlarını görüntüleyin ve siparişleri yönetin</p>
+    </div>
+
+    <div class="row mb-5">
+        @foreach (var table in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="futuristic-card @(table.IsOccupied ? "occupied" : "available")">
+                    <div class="card-glow"></div>
+                    <div class="card-content text-center">
+                        <div class="table-status-icon">
+                            <i class="fas fa-chair"></i>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <h5 class="neo-title">MASA @table.Number</h5>
+                        <div class="status-badge @(table.IsOccupied ? "status-occupied" : "status-available")">
+                            @(table.IsOccupied ? "DOLU" : "BOŞ")
+                        </div>
+                        @if (table.IsOccupied)
+                        {
+                            <a href="@Url.Action("Details", "Order", new { tableId = table.Id })" 
+                               class="neo-button">
+                                <i class="fas fa-eye me-2"></i>
+                                <span>Siparişi Görüntüle</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Details", "Order", new { tableId = table.Id, newOrder = true })" 
+                               class="neo-button">
+                                <i class="fas fa-plus me-2"></i>
+                                <span>Yeni Sipariş</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="section-title text-center mb-5">
+        <h2 class="text-light"><i class="fas fa-cogs me-2"></i>YÖNETİM</h2>
+        <div class="neon-line"></div>
+        <p class="text-muted">Restoran yönetim araçlarına hızlı erişim</p>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4 mb-4">
+            <div class="futuristic-panel">
+                <div class="panel-glow"></div>
+                <div class="panel-content text-center">
+                    <div class="cyber-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h5 class="neo-title">MENÜ YÖNETİMİ</h5>
+                    <p class="neo-text">Ürünleri ve kategorileri kolayca yönetin.</p>
+                    <a href="@Url.Action("Index", "Product")" class="cyber-button">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        MENÜYÜ YÖNET
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="futuristic-panel">
+                <div class="panel-glow"></div>
+                <div class="panel-content text-center">
+                    <div class="cyber-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h5 class="neo-title">SİPARİŞLER</h5>
+                    <p class="neo-text">Tüm siparişleri tek bir yerden takip edin.</p>
+                    <a href="@Url.Action("Index", "Order")" class="cyber-button">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        SİPARİŞLERİ GÖRÜNTÜLE
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="futuristic-panel">
+                <div class="panel-glow"></div>
+                <div class="panel-content text-center">
+                    <div class="cyber-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h5 class="neo-title">KATEGORİLER</h5>
+                    <p class="neo-text">Menü kategorilerini düzenleyin.</p>
+                    <a href="@Url.Action("Index", "Category")" class="cyber-button">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        KATEGORİLERİ YÖNET
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hero section animasyonu
+            const heroContent = document.querySelector('.hero-content');
+            heroContent.style.opacity = '0';
+            heroContent.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                heroContent.style.transition = 'all 1s ease';
+                heroContent.style.opacity = '1';
+                heroContent.style.transform = 'translateY(0)';
+            }, 300);
+
+            // Kartlar için animasyon
+            const cards = document.querySelectorAll('.futuristic-card, .futuristic-panel');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100 + 500);
+            });
+
+            // Badge'ler için animasyon
+            const badges = document.querySelectorAll('.badge');
+            badges.forEach((badge, index) => {
+                badge.style.opacity = '0';
+                badge.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    badge.style.transition = 'all 0.3s ease';
+                    badge.style.opacity = '1';
+                    badge.style.transform = 'scale(1)';
+                }, index * 200 + 800);
+            });
+        });
+    </script>
+}

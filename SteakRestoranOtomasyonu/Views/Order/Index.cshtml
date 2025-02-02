@@ -1,0 +1,210 @@
+@model IEnumerable<RestoranOtomasyonu.Models.Order>
+@using RestoranOtomasyonu.Extensions
+
+@{
+    ViewData["Title"] = "Siparişler";
+}
+
+<div class="text-center mb-5 hero-section">
+    <div class="hero-content">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-receipt text-danger me-2"></i>
+            SİPARİŞLER
+        </h1>
+        <p class="lead text-light">Tüm siparişleri görüntüleyin ve yönetin</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="futuristic-panel">
+                    <div class="panel-glow"></div>
+                    <div class="panel-content">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="neo-title mb-0">
+                                <i class="fas fa-chair me-2"></i>
+                                MASA @item.Table?.Number
+                            </h5>
+                            <div class="order-number">
+                                #@item.Id
+                            </div>
+                        </div>
+
+                        <div class="order-info mb-3">
+                            <div class="info-item">
+                                <i class="fas fa-calendar me-2"></i>
+                                @item.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-circle-info me-2"></i>
+                                @item.Status.GetDisplayName()
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-money-bill me-2"></i>
+                                @item.TotalAmount.ToString("C")
+                            </div>
+                        </div>
+
+                        <div class="order-items mb-4">
+                            <div class="cyber-divider mb-3">SİPARİŞ DETAYLARI</div>
+                            <div class="item-list">
+                                @foreach (var orderItem in item.OrderItems)
+                                {
+                                    <div class="order-item">
+                                        <span class="item-name">@orderItem.Product?.Name</span>
+                                        <span class="item-quantity">x @orderItem.Quantity</span>
+                                        <span class="item-price">@orderItem.UnitPrice.ToString("C")</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            @if (item.Status != OrderStatus.Completed)
+                            {
+                                <form asp-action="UpdateStatus" method="post" class="d-inline">
+                                    <input type="hidden" name="orderId" value="@item.Id" />
+                                    @if (item.Status == OrderStatus.Preparing)
+                                    {
+                                        <input type="hidden" name="status" value="@OrderStatus.Ready" />
+                                        <button type="submit" class="cyber-button success-btn">
+                                            <span></span><span></span><span></span><span></span>
+                                            <i class="fas fa-check me-2"></i>HAZIR
+                                        </button>
+                                    }
+                                    else if (item.Status == OrderStatus.Ready)
+                                    {
+                                        <input type="hidden" name="status" value="@OrderStatus.Completed" />
+                                        <button type="submit" class="cyber-button">
+                                            <span></span><span></span><span></span><span></span>
+                                            <i class="fas fa-flag-checkered me-2"></i>TAMAMLA
+                                        </button>
+                                    }
+                                </form>
+                            }
+                            <a asp-action="Details" asp-route-tableId="@item.TableId" 
+                               class="neo-button">
+                                <i class="fas fa-eye me-2"></i>DETAYLAR
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .order-number {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        text-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+    }
+
+    .order-info {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .info-item {
+        padding: 5px 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+    .cyber-divider {
+        position: relative;
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--primary-color);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .cyber-divider::before,
+    .cyber-divider::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 35%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    }
+
+    .cyber-divider::before {
+        left: 0;
+    }
+
+    .cyber-divider::after {
+        right: 0;
+    }
+
+    .order-items {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+    }
+
+    .item-list {
+        max-height: 150px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-color) rgba(255, 255, 255, 0.1);
+    }
+
+    .item-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .item-list::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+
+    .item-list::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-name {
+        flex: 1;
+    }
+
+    .item-quantity {
+        margin: 0 15px;
+        color: var(--primary-color);
+    }
+
+    .item-price {
+        font-weight: 600;
+    }
+
+    .success-btn {
+        background: rgba(46, 204, 113, 0.1);
+    }
+
+    .success-btn:hover {
+        background: rgba(46, 204, 113, 0.8);
+        box-shadow: 0 0 10px rgba(46, 204, 113, 0.8),
+                   0 0 40px rgba(46, 204, 113, 0.8),
+                   0 0 80px rgba(46, 204, 113, 0.8);
+    }
+</style> 

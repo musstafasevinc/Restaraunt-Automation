@@ -1,0 +1,38 @@
+@model RestoranOtomasyonu.Models.Product
+
+@{
+    ViewData["Title"] = "Ürün Sil";
+}
+
+<div class="container">
+    <h1>Ürün Sil</h1>
+    <div class="alert alert-danger">
+        <h3>Bu ürünü silmek istediğinizden emin misiniz?</h3>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4>Ürün</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Name)</dt>
+                <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+
+                <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Price)</dt>
+                <dd class="col-sm-10">@Html.DisplayFor(model => model.Price)</dd>
+
+                <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Description)</dt>
+                <dd class="col-sm-10">@Html.DisplayFor(model => model.Description)</dd>
+
+                <dt class="col-sm-2">Kategori</dt>
+             @Html.DisplayFor(model => model.Category != null ? model.Category.Name : "")
+
+            </dl>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Sil" class="btn btn-danger" />
+                <a asp-action="Index" class="btn btn-secondary">Geri Dön</a>
+            </form>
+        </div>
+    </div>
+</div> 

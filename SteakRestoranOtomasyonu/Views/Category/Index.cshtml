@@ -1,0 +1,64 @@
+@model IEnumerable<RestoranOtomasyonu.Models.Category>
+
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+
+<div class="text-center mb-5 hero-section">
+    <div class="hero-content">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-tags text-danger me-2"></i>
+            KATEGORİLER
+        </h1>
+        <p class="lead text-light">Menü kategorilerini yönetin</p>
+        <div class="mt-4">
+            <a asp-action="Create" class="cyber-button">
+                <span></span><span></span><span></span><span></span>
+                <i class="fas fa-plus me-2"></i>YENİ KATEGORİ EKLE
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="futuristic-panel">
+                    <div class="panel-glow"></div>
+                    <div class="panel-content text-center">
+                        <div class="cyber-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h5 class="neo-title">@item.Name</h5>
+                        <div class="status-badge status-available mb-4">
+                            <i class="fas fa-box me-1"></i>
+                            Ürün Sayısı: @item.Products.Count
+                        </div>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="neo-button">
+                                <i class="fas fa-edit me-1"></i>
+                                Düzenle
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="neo-button delete-btn">
+                                <i class="fas fa-trash me-1"></i>
+                                Sil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .delete-btn {
+        background: rgba(231, 76, 60, 0.1);
+        border-color: rgba(231, 76, 60, 0.2);
+    }
+    .delete-btn:hover {
+        background: rgba(231, 76, 60, 0.2);
+    }
+</style> 

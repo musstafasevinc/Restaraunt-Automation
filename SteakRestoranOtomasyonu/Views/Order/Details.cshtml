@@ -1,0 +1,121 @@
+@model RestoranOtomasyonu.Models.Order
+@using RestoranOtomasyonu.Extensions
+
+@{
+    ViewData["Title"] = "Sipariş Detayları";
+    var products = ViewBag.Products as List<RestoranOtomasyonu.Models.Product>;
+    var groupedProducts = products?.GroupBy(p => p.Category?.Name).ToList();
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Masa @Model.Table?.Number - Sipariş #@Model.Id</h4>
+                </div>
+                <div class="card-body">
+                    <h5>Mevcut Sipariş</h5>
+                    @if (Model.OrderItems.Any())
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Adet</th>
+                                    <th>Birim Fiyat</th>
+                                    <th>Toplam</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    <tr>
+                                        <td>@item.Product?.Name</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.UnitPrice.ToString("C")</td>
+                                        <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                                        <td>
+                                            <form asp-action="RemoveItem" method="post" style="display: inline;">
+                                                <input type="hidden" name="orderId" value="@Model.Id" />
+                                                <input type="hidden" name="orderItemId" value="@item.Id" />
+                                                <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Toplam:</strong></td>
+                                    <td><strong>@Model.TotalAmount.ToString("C")</strong></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="mt-3">
+                            <form asp-action="UpdateStatus" method="post" style="display: inline;">
+                                <input type="hidden" name="orderId" value="@Model.Id" />
+                                @if (Model.Status == OrderStatus.Preparing)
+                                {
+                                    <input type="hidden" name="status" value="@OrderStatus.Ready" />
+                                    <button type="submit" class="btn btn-success">Hazır</button>
+                                }
+                                else if (Model.Status == OrderStatus.Ready)
+                                {
+                                    <input type="hidden" name="status" value="@OrderStatus.Completed" />
+                                    <button type="submit" class="btn btn-primary">Tamamlandı</button>
+                                }
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz sipariş eklenmemiş.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Ürün Ekle</h5>
+                </div>
+                <div class="card-body">
+                    @if (groupedProducts != null)
+                    {
+                        foreach (var group in groupedProducts)
+                        {
+                            <h6 class="mt-3">@(group.Key ?? "Diğer")</h6>
+                            <div class="list-group mb-3">
+                                @foreach (var product in group)
+                                {
+                                    <div class="list-group-item">
+                                        <form asp-action="AddItem" method="post" class="row g-2 align-items-center">
+                                            <input type="hidden" name="orderId" value="@Model.Id" />
+                                            <input type="hidden" name="productId" value="@product.Id" />
+                                            <div class="col">
+                                                <strong>@product.Name</strong><br />
+                                                <small class="text-muted">@product.Price.ToString("C")</small>
+                                            </div>
+                                            <div class="col-auto">
+                                                <input type="number" name="quantity" value="1" min="1" 
+                                                       class="form-control form-control-sm" style="width: 70px;" />
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-primary btn-sm">Ekle</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
